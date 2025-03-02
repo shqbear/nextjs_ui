@@ -24,14 +24,21 @@ export default function ChatList({
   loadingSubmit,
   reload,
 }: ChatListProps) {
+  // Filter out duplicate first message when conditions match
+  const displayMessages = React.useMemo(() => {
+    return messages.filter(message => {
+      // Keep message only if it has a valid id property
+      return message.id !== undefined && message.id !== null && message.id !== '';
+    });
+  }, [messages]);
   return (
     <div className="flex-1 w-full overflow-y-auto">
       <ChatMessageList>
-        {messages.map((message, index) => (
+        {displayMessages.map((message, index) => (
           <ChatMessage
             key={message.id || index}
             message={message}
-            isLast={index === messages.length - 1}
+            isLast={index === displayMessages.length - 1}
             isLoading={isLoading}
             reload={reload}
           />
