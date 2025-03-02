@@ -45,6 +45,8 @@ export default function ChatBottombar({
   const base64Images = useChatStore((state) => state.base64Images);
   const setBase64Images = useChatStore((state) => state.setBase64Images);
   const selectedModel = useChatStore((state) => state.selectedModel);
+  
+  let is_first_render = true;
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -74,6 +76,16 @@ export default function ChatBottombar({
       inputRef.current.focus();
       console.log("Input focused");
     }
+    // //如果是首次渲染，并且input不为空，那么说明用户发送了初始消息，这时候应该自动触发submit
+    // if (is_first_render){
+    //   //打印日志：
+    //   console.log("is_first_render", is_first_render);
+    //   console.log("input", input);
+    //   if (is_first_render && input && input.trim()) {
+    //     handleSubmit(new Event("submit"));
+    //     is_first_render = false;
+    //   }
+    // }
   }, [inputRef]);
 
   return (
