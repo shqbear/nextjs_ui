@@ -17,6 +17,7 @@ interface ChatLayoutProps {
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
+  initmodel?: string;
 }
 
 type MergedProps = ChatLayoutProps & ChatProps;
@@ -25,6 +26,7 @@ export function ChatLayout({
   defaultLayout = [30, 160],
   defaultCollapsed = false,
   navCollapsedSize,
+  initmodel,
   initialMessages,
   id,
 }: MergedProps) {
@@ -84,7 +86,7 @@ export function ChatLayout({
       >
         <Sidebar
           isCollapsed={isCollapsed || isMobile}
-          messages={initialMessages}
+          messages={[]} // 删除初始消息
           isMobile={isMobile}
           chatId={id}
         />
@@ -94,7 +96,7 @@ export function ChatLayout({
         className="h-full w-full flex justify-center"
         defaultSize={defaultLayout[1]}
       >
-        <Chat id={id} initialMessages={initialMessages} isMobile={isMobile} />
+        <Chat id={id} initialMessages={initialMessages} initmodel={initmodel} isMobile={isMobile} />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
