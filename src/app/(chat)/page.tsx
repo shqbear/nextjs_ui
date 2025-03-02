@@ -10,37 +10,27 @@ import {
 } from "@/components/ui/dialog";
 import UsernameForm from "@/components/username-form";
 import { generateUUID } from "@/lib/utils";
-import React, { useEffect } from "react"; // 新增useEffect
+import React, { useEffect, Suspense } from "react";
 import useChatStore from "../hooks/useChatStore";
-import { useSearchParams } from "next/navigation"; // 新增hook
+import { useRouter, useSearchParams } from "next/navigation"; 
 
-export default function Home() {
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Home />
+    </Suspense>
+  );
+}
+
+function Home() {
   const id = generateUUID();
   const [open, setOpen] = React.useState(false);
   const userName = useChatStore((state) => state.userName);
   const setUserName = useChatStore((state) => state.setUserName);
   const searchParams = useSearchParams(); // 获取查询参数
-
-  useEffect(() => {
-    const q = searchParams.get('q');
-    if (q) {
-      // 使用name属性选择器定位输入框
-      const input = document.querySelector('textarea[name="message"]') as HTMLTextAreaElement;
-      if (input) {
-        input.value = q;
-        
-        // 构造更规范的键盘事件
-        const enterEvent = new KeyboardEvent('keydown', {
-          key: 'Enter',
-          code: 'Enter',
-          keyCode: 13,
-          bubbles: true,
-          cancelable: true
-        });
-        input.dispatchEvent(enterEvent);
-      }
-    }
-  }, [searchParams]);
+  const q = searchParams.get("q"); // 提取q参数
+  const initialMsg = q ? [{ role: "user", content: String(q) }] : [];
+  //const initialMsg = q ? [String(q)] : [];
 
   const onOpenChange = (isOpen: boolean) => {
     if (userName) return setOpen(isOpen);
@@ -55,7 +45,7 @@ export default function Home() {
         <ChatLayout
           key={id}
           id={id}
-          initialMessages={[]}
+          initialMessages={initialMsg}
           navCollapsedSize={10}
           defaultLayout={[30, 160]}
         />
