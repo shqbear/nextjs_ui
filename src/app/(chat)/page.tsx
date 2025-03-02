@@ -29,6 +29,8 @@ function Home() {
   const setUserName = useChatStore((state) => state.setUserName);
   const searchParams = useSearchParams(); // 获取查询参数
   const q = searchParams.get("q"); // 提取q参数
+  //提取model参数
+  const initmodel = searchParams.get("model");
   const initialMsg = q ? [{ role: "user", content: String(q) }] : [];
   //const initialMsg = q ? [String(q)] : [];
 
@@ -46,6 +48,7 @@ function Home() {
           key={id}
           id={id}
           initialMessages={initialMsg}
+          initmodel={initmodel}
           navCollapsedSize={10}
           defaultLayout={[30, 160]}
         />
@@ -63,3 +66,6 @@ function Home() {
     </main>
   );
 }
+
+//测试url: 
+// http://localhost:18328/?model=deepseek-r1:1.5b&q=hi
