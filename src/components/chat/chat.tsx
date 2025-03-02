@@ -63,7 +63,7 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
   const getMessagesById = useChatStore((state) => state.getMessagesById);
   const router = useRouter();
 
-  //const [setHasAutoSubmitted] = React.useState(false);
+  const [hasAutoSubmitted, setHasAutoSubmitted] = React.useState(false);
 
   const hasAutoSubmittedRef = React.useRef(false);
 
@@ -120,7 +120,8 @@ useEffect(() => {
     
     // Only auto-submit if needed
     if (!hasAutoSubmittedRef.current) {
-      hasAutoSubmittedRef.current = true;
+      //hasAutoSubmittedRef.current = true;
+      //setHasAutoSubmitted(true);
       // Show initial messages immediately
       const uniqueMessages = initialMessages.filter((msg, index, arr) => {
         if (msg.role === 'user') {
@@ -131,7 +132,7 @@ useEffect(() => {
       
       // Set messages immediately so they appear right away
       setMessages(uniqueMessages);
-      console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmittedRef.current);
+      console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
   
       const hasAssistantResponse = initialMessages.some(msg => msg.role === "assistant");
       
@@ -172,20 +173,20 @@ useEffect(() => {
             
             // Submit directly through handleSubmit to bypass potential message clearing
             handleSubmit(event, requestOptions);
-            //setHasAutoSubmitted(true);
+            setHasAutoSubmitted(true);
             hasAutoSubmittedRef.current = true;
           }, 300);
         } else {
-          //setHasAutoSubmitted(true);
+          setHasAutoSubmitted(true);
           hasAutoSubmittedRef.current = true;
         }
       } else {
-        //setHasAutoSubmitted(true);
+        setHasAutoSubmitted(true);
         hasAutoSubmittedRef.current = true;
       }
     }
   }
-}, [initmodel, setSelectedModel, initialMessages, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
+}, [initmodel, setHasAutoSubmitted, setSelectedModel, initialMessages, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
 
   const removeLatestMessage = () => {
     const updatedMessages = messages.slice(0, -1);
