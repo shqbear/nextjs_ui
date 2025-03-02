@@ -109,63 +109,63 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
   };
 
   useEffect(() => {
-    console.log("---- useEffect triggered ----");
-    console.log("Current state - hasAutoSubmitted:", hasAutoSubmitted);
-    console.log("Current ref - hasAutoSubmittedRef.current:", hasAutoSubmittedRef.current);
-    console.log("initialMessages:", initialMessages);
-    console.log("Current messages:", messages);
+    //console.log("---- useEffect triggered ----");
+    //console.log("Current state - hasAutoSubmitted:", hasAutoSubmitted);
+    //console.log("Current ref - hasAutoSubmittedRef.current:", hasAutoSubmittedRef.current);
+    //console.log("initialMessages:", initialMessages);
+    //console.log("Current messages:", messages);
     
     if (initmodel && !selectedModel) {
-      console.log("Setting selected model:", initmodel);
+      //console.log("Setting selected model:", initmodel);
       setSelectedModel(initmodel);
     }
   
     if (initialMessages.length > 0) {
-      console.log("Processing initialMessages, length:", initialMessages.length);
+      //console.log("Processing initialMessages, length:", initialMessages.length);
       
       // Only auto-submit if needed
       if (!hasAutoSubmittedRef.current) {
-        console.log("hasAutoSubmittedRef is false, continuing with processing");
+        //console.log("hasAutoSubmittedRef is false, continuing with processing");
         //hasAutoSubmittedRef.current = true;
         //setHasAutoSubmitted(true);
         
         // Show initial messages immediately
-        console.log("Before uniqueMessages filter - initialMessages:", JSON.stringify(initialMessages.map(m => ({id: m.id, role: m.role, content: typeof m.content === 'string' ? m.content.substring(0, 20) + '...' : '[complex content]'}))));
+        //console.log("Before uniqueMessages filter - initialMessages:", JSON.stringify(initialMessages.map(m => ({id: m.id, role: m.role, content: typeof m.content === 'string' ? m.content.substring(0, 20) + '...' : '[complex content]'}))));
         
         const uniqueMessages = initialMessages.filter((msg, index, arr) => {
           if (msg.role === 'user') {
             const isUnique = arr.findIndex(m => m.role === 'user' && m.content === msg.content) === index;
-            console.log(`Message ${index} (${msg.role}): ${isUnique ? 'keeping' : 'filtering out duplicate'}`);
+            //console.log(`Message ${index} (${msg.role}): ${isUnique ? 'keeping' : 'filtering out duplicate'}`);
             return isUnique;
           }
           return true;
         });
         
-        console.log("After uniqueMessages filter - count before:", initialMessages.length, "count after:", uniqueMessages.length);
-        console.log("Unique messages:", JSON.stringify(uniqueMessages.map(m => ({id: m.id, role: m.role}))));
+        //console.log("After uniqueMessages filter - count before:", initialMessages.length, "count after:", uniqueMessages.length);
+        //console.log("Unique messages:", JSON.stringify(uniqueMessages.map(m => ({id: m.id, role: m.role}))));
         
         // Set messages immediately so they appear right away
-        console.log("Setting messages with uniqueMessages");
-        setMessages(uniqueMessages);
-        console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
+        //console.log("Setting messages with uniqueMessages");
+        setMessages(uniqueMessages); //不需要立即显示？
+        //console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
     
         const hasAssistantResponse = initialMessages.some(msg => msg.role === "assistant");
-        console.log("Has assistant response:", hasAssistantResponse);
+        //console.log("Has assistant response:", hasAssistantResponse);
         
         if (!hasAssistantResponse) {
           const lastUserMessage = [...initialMessages]
             .reverse()
             .find(msg => msg.role === "user");
           
-          console.log("Last user message:", lastUserMessage ? JSON.stringify({
-            id: lastUserMessage.id,
-            content: typeof lastUserMessage.content === 'string' ? 
-              lastUserMessage.content.substring(0, 20) + '...' : 
-              '[complex content]'
-          }) : 'none found');
+          // console.log("Last user message:", lastUserMessage ? JSON.stringify({
+          //   id: lastUserMessage.id,
+          //   content: typeof lastUserMessage.content === 'string' ? 
+          //     lastUserMessage.content.substring(0, 20) + '...' : 
+          //     '[complex content]'
+          // }) : 'none found');
           
           if (lastUserMessage && lastUserMessage.content && (initmodel || selectedModel)) {
-            console.log("Processing last user message for auto-submission");
+            //console.log("Processing last user message for auto-submission");
             // Create a copy of the message to ensure it persists
             const persistentUserMessage = {
               id: lastUserMessage.id || generateId(),
@@ -173,15 +173,15 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
               content: lastUserMessage.content
             };
             
-            console.log("Created persistentUserMessage:", JSON.stringify({
-              id: persistentUserMessage.id,
-              content: typeof persistentUserMessage.content === 'string' ? 
-                persistentUserMessage.content.substring(0, 20) + '...' : 
-                '[complex content]'
-            }));
+            // console.log("Created persistentUserMessage:", JSON.stringify({
+            //   id: persistentUserMessage.id,
+            //   content: typeof persistentUserMessage.content === 'string' ? 
+            //     persistentUserMessage.content.substring(0, 20) + '...' : 
+            //     '[complex content]'
+            // }));
             
             // Explicitly save this message to ensure persistence
-            console.log("Saving persistentUserMessage to id:", id);
+            //console.log("Saving persistentUserMessage to id:", id);
             saveMessages(id, [persistentUserMessage]);
             
             // Set input without clearing messages
@@ -195,8 +195,8 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
             
             // Use a longer timeout to ensure UI stability
             setTimeout(() => {
-              console.log("Timeout fired: Executing auto-submit with persistent message");
-              console.log("Selected model for auto-submit:", initmodel || selectedModel);
+              //console.log("Timeout fired: Executing auto-submit with persistent message");
+              //console.log("Selected model for auto-submit:", initmodel || selectedModel);
               // Create a synthetic submission that preserves the message
               const requestOptions: ChatRequestOptions = {
                 body: {
@@ -205,28 +205,28 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
               };
               
               // Submit directly through handleSubmit to bypass potential message clearing
-              console.log("Calling handleSubmit with event and requestOptions");
-              console.log("Current messages before handleSubmit:", messages);
+              //console.log("Calling handleSubmit with event and requestOptions");
+              //console.log("Current messages before handleSubmit:", messages);
               handleSubmit(event, requestOptions);
-              console.log("Setting hasAutoSubmitted flags to true");
+              //console.log("Setting hasAutoSubmitted flags to true");
               setHasAutoSubmitted(true);
               hasAutoSubmittedRef.current = true;
             }, 300);
           } else {
-            console.log("No valid last user message or model for auto-submission, setting flags only");
+            //console.log("No valid last user message or model for auto-submission, setting flags only");
             setHasAutoSubmitted(true);
             hasAutoSubmittedRef.current = true;
           }
         } else {
-          console.log("Assistant response found, setting flags only");
+          //console.log("Assistant response found, setting flags only");
           setHasAutoSubmitted(true);
           hasAutoSubmittedRef.current = true;
         }
       } else {
-        console.log("hasAutoSubmittedRef is true, skipping processing");
+        //console.log("hasAutoSubmittedRef is true, skipping processing");
       }
     } else {
-      console.log("No initialMessages to process");
+      //console.log("No initialMessages to process");
     }
   }, [initmodel, setHasAutoSubmitted, setSelectedModel, initialMessages, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit, messages]);
   
