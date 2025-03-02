@@ -46,10 +46,11 @@ export default function ChatList({
         {loadingSubmit && (
           <ChatBubble variant="received">
             <ChatBubbleAvatar
-              src="/ollama.png"
+              src="/deepseek-color.png"
               width={6}
               height={6}
-              className="object-contain dark:invert"
+              className="object-contain"
+              // className="object-contain dark:invert"
             />
             <ChatBubbleMessage isLoading />
           </ChatBubble>

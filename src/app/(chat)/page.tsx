@@ -37,7 +37,7 @@ function Home() {
   const onOpenChange = (isOpen: boolean) => {
     if (userName) return setOpen(isOpen);
 
-    setUserName("Anonymous");
+    setUserName("用户");
     setOpen(isOpen);
   };
 

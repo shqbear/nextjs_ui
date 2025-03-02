@@ -7,8 +7,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ollama UI",
-  description: "Ollama chatbot web interface",
+  title: "DeepSeek - 探索未至之境",
+  description: "DeepSeek - 探索未至之境",
 };
 
 export const viewport = {

@@ -82,7 +82,7 @@ function ChatMessage({ message, isLast, isLoading, reload }: ChatMessageProps) {
     thinkContent && message.role === "assistant" && (
       <details className="mb-2 text-sm" open>
         <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-          Thinking process
+          思考过程
         </summary>
         <div className="mt-2 text-muted-foreground">
           <Markdown remarkPlugins={[remarkGfm]}>{thinkContent}</Markdown>
@@ -142,11 +142,11 @@ function ChatMessage({ message, isLast, isLoading, reload }: ChatMessageProps) {
     <motion.div {...MOTION_CONFIG} className="flex flex-col gap-2 whitespace-pre-wrap">
       <ChatBubble variant={message.role === "user" ? "sent" : "received"}>
         <ChatBubbleAvatar
-          src={message.role === "assistant" ? "/ollama.png" : ""}
+          src={message.role === "assistant" ? "/deepseek_black.png" : ""}
           width={6}
           height={6}
           className="object-contain dark:invert"
-          fallback={message.role === "user" ? "US" : ""}
+          fallback={message.role === "user" ? "用户" : ""}
         />
         <ChatBubbleMessage>
           {renderThinkingProcess()}

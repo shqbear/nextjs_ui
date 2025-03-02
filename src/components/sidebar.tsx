@@ -69,20 +69,21 @@ export function Sidebar({
           <div className="flex gap-3 items-center ">
             {!isCollapsed && !isMobile && (
               <Image
-                src="/ollama.png"
+                src="/deepseek-color.png"
                 alt="AI"
                 width={28}
                 height={28}
-                className="dark:invert hidden 2xl:block"
+                className="hidden 2xl:block"
+                // className="dark:invert hidden 2xl:block"
               />
             )}
-            New chat
+            新建聊天
           </div>
           <SquarePen size={18} className="shrink-0 w-4 h-4" />
         </Button>
 
         <div className="flex flex-col pt-10 gap-2">
-          <p className="pl-4 text-xs text-muted-foreground">Your chats</p>
+          <p className="pl-4 text-xs text-muted-foreground">聊天记录</p>
           <Suspense fallback>
             {chats &&
               Object.entries(chats)
@@ -132,18 +133,18 @@ export function Sidebar({
                               onClick={(e) => e.stopPropagation()}
                             >
                               <Trash2 className="shrink-0 w-4 h-4" />
-                              Delete chat
+                              删除聊天
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader className="space-y-4">
-                              <DialogTitle>Delete chat?</DialogTitle>
+                              <DialogTitle>删除聊天?</DialogTitle>
                               <DialogDescription>
-                                Are you sure you want to delete this chat? This
-                                action cannot be undone.
+                                你确定要删除聊天记录吗？
+                                此操作无法撤销。
                               </DialogDescription>
                               <div className="flex justify-end gap-2">
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">取消</Button>
                                 <Button
                                   variant="destructive"
                                   onClick={(e) => {
@@ -152,7 +153,7 @@ export function Sidebar({
                                     router.push("/");
                                   }}
                                 >
-                                  Delete
+                                  删除
                                 </Button>
                               </div>
                             </DialogHeader>

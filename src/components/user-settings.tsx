@@ -59,21 +59,21 @@ export default function UserSettings() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48 p-2">
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+        {/* <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <PullModel />
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <Dialog>
           <DialogTrigger className="w-full">
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <div className="flex w-full gap-2 p-1 items-center cursor-pointer">
                 <GearIcon className="w-4 h-4" />
-                Settings
+                设置
               </div>
             </DropdownMenuItem>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader className="space-y-4">
-              <DialogTitle>Settings</DialogTitle>
+              <DialogTitle>设置</DialogTitle>
               <EditUsernameForm setOpen={setOpen} />
             </DialogHeader>
           </DialogContent>

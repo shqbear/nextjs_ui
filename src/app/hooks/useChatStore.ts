@@ -12,7 +12,7 @@ interface State {
   chats: Record<string, ChatSession>;
   currentChatId: string | null;
   selectedModel: string | null;
-  userName: string | "Anonymous";
+  userName: string | "用户";
   isDownloading: boolean;
   downloadProgress: number;
   downloadingModel: string | null;
@@ -39,7 +39,7 @@ const useChatStore = create<State & Actions>()(
       chats: {},
       currentChatId: null,
       selectedModel: null,
-      userName: "Anonymous",
+      userName: "用户",
       isDownloading: false,
       downloadProgress: 0,
       downloadingModel: null, 
@@ -60,12 +60,38 @@ const useChatStore = create<State & Actions>()(
       saveMessages: (chatId, messages) => {
         set((state) => {
           const existingChat = state.chats[chatId];
-
+          const existingMessages = existingChat?.messages || [];
+          
+          console.log("==== saveMessages called ====");
+          console.log(`Chat ID: ${chatId}`);
+          
+          // Merge with existing messages if needed
+          let combinedMessages: Message[];
+          
+          // If saving just one message, check if it already exists
+          if (messages.length === 1 && existingMessages.length > 0) {
+            const newMsg = messages[0];
+            const duplicate = existingMessages.find(m => 
+              m.role === newMsg.role && m.content === newMsg.content
+            );
+            
+            if (duplicate) {
+              console.log(`Duplicate message detected! ID: ${duplicate.id}, not adding again`);
+              return state; // Return unchanged state - no need to update
+            }
+            
+            combinedMessages = [...existingMessages, ...messages];
+          } else {
+            combinedMessages = messages;
+          }
+          
+          // Additional deduplication code here (similar to your current logic)
+          
           return {
             chats: {
               ...state.chats,
               [chatId]: {
-                messages: [...messages],
+                messages: combinedMessages,
                 createdAt: existingChat?.createdAt || new Date().toISOString(),
               },
             },

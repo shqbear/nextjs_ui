@@ -20,7 +20,7 @@ import useChatStore from "@/app/hooks/useChatStore";
 
 const formSchema = z.object({
   username: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "用户名应该至少有两个字。",
   }),
 });
 
@@ -41,13 +41,13 @@ export default function EditUsernameForm({ setOpen }: EditUsernameFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setUserName(values.username); // Update the userName in the store
-    toast.success("Name updated successfully");
+    toast.success("用户名更新成功。");
   }
 
   return (
     <Form {...form}>
       <div className="w-full flex flex-col gap-4 pt-4">
-        <FormLabel>Theme</FormLabel>
+        <FormLabel>主题</FormLabel>
         <ModeToggle />
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -56,11 +56,11 @@ export default function EditUsernameForm({ setOpen }: EditUsernameFormProps) {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>用户名</FormLabel>
               <FormControl>
                 <div className="md:flex gap-4">
-                  <Input {...field} type="text" placeholder="Enter your name" />
-                  <Button type="submit">Change name</Button>
+                  <Input {...field} type="text" placeholder="输入用户名" />
+                  <Button type="submit">修改用户名</Button>
                 </div>
               </FormControl>
               <FormMessage />
