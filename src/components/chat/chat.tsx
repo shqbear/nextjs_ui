@@ -61,6 +61,8 @@ export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
   const getMessagesById = useChatStore((state) => state.getMessagesById);
   const router = useRouter();
 
+  const [hasAutoSubmitted, setHasAutoSubmitted] = React.useState(false);
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     window.history.replaceState({}, "", `/c/${id}`);
@@ -101,6 +103,75 @@ export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
     saveMessages(id, [...messages, userMessage]);
     setBase64Images(null);
   };
+
+  // Modified useEffect for persistent message display
+useEffect(() => {
+  console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
+  
+  if (initialMessages.length > 0) {
+    // Show initial messages immediately
+    const uniqueMessages = initialMessages.filter((msg, index, arr) => {
+      if (msg.role === 'user') {
+        return arr.findIndex(m => m.role === 'user' && m.content === msg.content) === index;
+      }
+      return true;
+    });
+    
+    // Set messages immediately so they appear right away
+    setMessages(uniqueMessages);
+    
+    // Only auto-submit if needed
+    if (!hasAutoSubmitted) {
+      const hasAssistantResponse = initialMessages.some(msg => msg.role === "assistant");
+      
+      if (!hasAssistantResponse) {
+        const lastUserMessage = [...initialMessages]
+          .reverse()
+          .find(msg => msg.role === "user");
+        
+        if (lastUserMessage && lastUserMessage.content && selectedModel) {
+          // Create a copy of the message to ensure it persists
+          const persistentUserMessage = {
+            id: lastUserMessage.id || generateId(),
+            role: "user",
+            content: lastUserMessage.content
+          };
+          
+          // Explicitly save this message to ensure persistence
+          saveMessages(id, [persistentUserMessage]);
+          
+          // Set input without clearing messages
+          setInput(typeof lastUserMessage.content === 'string' 
+            ? lastUserMessage.content 
+            : '');
+          
+          const event = {
+            preventDefault: () => {},
+          } as React.FormEvent<HTMLFormElement>;
+          
+          // Use a longer timeout to ensure UI stability
+          setTimeout(() => {
+            console.log("Executing auto-submit with persistent message");
+            // Create a synthetic submission that preserves the message
+            const requestOptions: ChatRequestOptions = {
+              body: {
+                selectedModel: selectedModel,
+              }
+            };
+            
+            // Submit directly through handleSubmit to bypass potential message clearing
+            handleSubmit(event, requestOptions);
+            setHasAutoSubmitted(true);
+          }, 300);
+        } else {
+          setHasAutoSubmitted(true);
+        }
+      } else {
+        setHasAutoSubmitted(true);
+      }
+    }
+  }
+}, [initialMessages, hasAutoSubmitted, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
 
   const removeLatestMessage = () => {
     const updatedMessages = messages.slice(0, -1);
@@ -149,7 +220,7 @@ export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
         <>
           <ChatList
             messages={messages}
-            isLoading={isLoading}
+            isLoading={isLoading || hasAutoSubmitted && !isLoading} // Show loading state during auto-submit
             loadingSubmit={loadingSubmit}
             reload={async () => {
               removeLatestMessage();
