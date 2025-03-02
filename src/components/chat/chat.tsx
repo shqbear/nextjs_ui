@@ -17,10 +17,11 @@ import Image from "next/image";
 export interface ChatProps {
   id: string;
   initialMessages: Message[] | [];
+  initmodel?: string;
   isMobile?: boolean;
 }
 
-export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
+export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatProps) {
   const {
     messages,
     input,
@@ -57,6 +58,7 @@ export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
   const base64Images = useChatStore((state) => state.base64Images);
   const setBase64Images = useChatStore((state) => state.setBase64Images);
   const selectedModel = useChatStore((state) => state.selectedModel);
+  const setSelectedModel = useChatStore((state) => state.setSelectedModel);
   const saveMessages = useChatStore((state) => state.saveMessages);
   const getMessagesById = useChatStore((state) => state.getMessagesById);
   const router = useRouter();
@@ -108,6 +110,11 @@ export default function Chat({ initialMessages, id, isMobile }: ChatProps) {
 useEffect(() => {
   console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
   
+  if (initmodel) {
+    console.log("Setting selected model:", initmodel);
+    setSelectedModel(initmodel);
+  }
+
   if (initialMessages.length > 0) {
     // Show initial messages immediately
     const uniqueMessages = initialMessages.filter((msg, index, arr) => {
@@ -129,7 +136,7 @@ useEffect(() => {
           .reverse()
           .find(msg => msg.role === "user");
         
-        if (lastUserMessage && lastUserMessage.content && selectedModel) {
+        if (lastUserMessage && lastUserMessage.content && (initmodel || selectedModel)) {
           // Create a copy of the message to ensure it persists
           const persistentUserMessage = {
             id: lastUserMessage.id || generateId(),
@@ -155,7 +162,7 @@ useEffect(() => {
             // Create a synthetic submission that preserves the message
             const requestOptions: ChatRequestOptions = {
               body: {
-                selectedModel: selectedModel,
+                selectedModel: initmodel || selectedModel, // Use initmodel if available (it's the most current)
               }
             };
             
@@ -171,7 +178,7 @@ useEffect(() => {
       }
     }
   }
-}, [initialMessages, hasAutoSubmitted, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
+}, [initmodel, setSelectedModel, initialMessages, hasAutoSubmitted, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
 
   const removeLatestMessage = () => {
     const updatedMessages = messages.slice(0, -1);
