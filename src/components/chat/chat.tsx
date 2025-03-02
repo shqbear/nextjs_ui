@@ -63,7 +63,9 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
   const getMessagesById = useChatStore((state) => state.getMessagesById);
   const router = useRouter();
 
-  const [hasAutoSubmitted, setHasAutoSubmitted] = React.useState(false);
+  //const [setHasAutoSubmitted] = React.useState(false);
+
+  const hasAutoSubmittedRef = React.useRef(false);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,27 +110,29 @@ export default function Chat({ initialMessages, initmodel, id, isMobile }: ChatP
 
   // Modified useEffect for persistent message display
 useEffect(() => {
-  console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmitted);
   
-  if (initmodel) {
+  if (initmodel && !selectedModel) {
     console.log("Setting selected model:", initmodel);
     setSelectedModel(initmodel);
   }
 
   if (initialMessages.length > 0) {
-    // Show initial messages immediately
-    const uniqueMessages = initialMessages.filter((msg, index, arr) => {
-      if (msg.role === 'user') {
-        return arr.findIndex(m => m.role === 'user' && m.content === msg.content) === index;
-      }
-      return true;
-    });
-    
-    // Set messages immediately so they appear right away
-    setMessages(uniqueMessages);
     
     // Only auto-submit if needed
-    if (!hasAutoSubmitted) {
+    if (!hasAutoSubmittedRef.current) {
+      hasAutoSubmittedRef.current = true;
+      // Show initial messages immediately
+      const uniqueMessages = initialMessages.filter((msg, index, arr) => {
+        if (msg.role === 'user') {
+          return arr.findIndex(m => m.role === 'user' && m.content === msg.content) === index;
+        }
+        return true;
+      });
+      
+      // Set messages immediately so they appear right away
+      setMessages(uniqueMessages);
+      console.log("Auto-submit effect running, initialMessages:", initialMessages.length, "hasAutoSubmitted:", hasAutoSubmittedRef.current);
+  
       const hasAssistantResponse = initialMessages.some(msg => msg.role === "assistant");
       
       if (!hasAssistantResponse) {
@@ -168,17 +172,20 @@ useEffect(() => {
             
             // Submit directly through handleSubmit to bypass potential message clearing
             handleSubmit(event, requestOptions);
-            setHasAutoSubmitted(true);
+            //setHasAutoSubmitted(true);
+            hasAutoSubmittedRef.current = true;
           }, 300);
         } else {
-          setHasAutoSubmitted(true);
+          //setHasAutoSubmitted(true);
+          hasAutoSubmittedRef.current = true;
         }
       } else {
-        setHasAutoSubmitted(true);
+        //setHasAutoSubmitted(true);
+        hasAutoSubmittedRef.current = true;
       }
     }
   }
-}, [initmodel, setSelectedModel, initialMessages, hasAutoSubmitted, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
+}, [initmodel, setSelectedModel, initialMessages, selectedModel, id, saveMessages, generateId, setMessages, setInput, handleSubmit]);
 
   const removeLatestMessage = () => {
     const updatedMessages = messages.slice(0, -1);
